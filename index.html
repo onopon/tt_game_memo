@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href="./css/bootstrap.min.css" rel="stylesheet">
+    <script src="./js/bootstrap.min.js"></script>
+    <script src="./js/jquery-3.6.0.min.js"></script>
+    <script src="./js/vue.js"></script>
+    <link rel="stylesheet" type="text/css" href="./bootstrap-datepicker-1.9.0-dist/css/bootstrap-datepicker.min.css">
+    <script type="text/javascript" src="./bootstrap-datepicker-1.9.0-dist/js/bootstrap-datepicker.min.js"></script>
+    <script type="text/javascript" src="./bootstrap-datepicker-1.9.0-dist/locales/bootstrap-datepicker.ja.min.js"></script>
+    <script>
+        $(function(){
+            //Default
+            $('#datepicker-default .date').datepicker({
+                        format: "yyyy/mm/dd",
+                        language: 'ja'
+                    });
+        });
+    </script>
+  </head>
+  <body>
+    <div id="app" class="container-fluid">
+        <div class="row mt-2">
+            <div class="col">
+                <p class="title">スコアメモ</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <p>選手ID：<input id="playerIdForm" v-model.trim="playerID" type="text" name="playerID" size="30" list="playerList"></p>
+                <datalist id="playerList">
+                    <option v-for="player in allPlayers" v-bind:value="player.playerID">
+                    {{ player.playerID}}: {{ player.name }}, {{ player.country }}, {{ player.region }}, class{{ player.klass }}
+                    </option>
+                </datalist>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group" id="datepicker-default">
+                <label class="col-sm-1 control-label">日付</label>
+                <div class="col-sm-3 form-inline">
+                    <div class="input-group date">
+                        <input v-model="date" type="text" class="form-control">
+                        <div class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Tournament:</label>
+                <div class="col-sm-3">
+                    <select name="tournament">
+                        <option value="FACTOR20">FACTOR20</option>
+                        <option value="FACTOR40">FACTOR40</option>
+                        <option value="CHAMPIONSHIPS">CHAMPIONSHIPS</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3 ml-2">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="gameNumber" id="gameNumber1" checked @click="changeFocus(1)">
+                <label class="form-check-label" for="gameNumber1">
+                    第1ゲーム
+                </label>
+            </div>
+        </div>
+        <div class="row mt-3 score-board" id="scoreBoard1">
+            <div class="row">
+                <div class="col-12 score">
+                    <input type="text"> 
+                </div>
+            </div>
+            <div class="row mt-3t">
+                <div class="col-12 score">
+                    <input type="text">
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3 ml-2">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="gameNumber" id="gameNumber2" @click="changeFocus(2)">
+                <label class="form-check-label" for="gameNumber2">
+                    第2ゲーム
+                </label>
+            </div>
+        </div>
+        <div class="row mt-3 score-board" id="scoreBoard2">
+            <div class="row">
+                <div class="col-12 score">
+                    <input type="text"> 
+                </div>
+            </div>
+            <div class="row mt-3t">
+                <div class="col-12 score">
+                    <input type="text">
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3 ml-2">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="gameNumber" id="gameNumber3" @click="changeFocus(3)">
+                <label class="form-check-label" for="gameNumber3">
+                    第3ゲーム
+                </label>
+            </div>
+        </div>
+        <div class="row mt-3 score-board" id="scoreBoard3">
+            <div class="row">
+                <div class="col-12 score">
+                    <input type="text">
+                </div>
+            </div>
+            <div class="row mt-3t">
+                <div class="col-12 score">
+                    <input type="text">
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3 ml-2">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="gameNumber" id="gameNumber4" @click="changeFocus(4)">
+                <label class="form-check-label" for="gameNumber4">
+                    第4ゲーム
+                </label>
+            </div>
+        </div>
+        <div class="row mt-3 score-board" id="scoreBoard4">
+            <div class="row">
+                <div class="col-12 score">
+                    <input type="text">
+                </div>
+            </div>
+            <div class="row mt-3t">
+                <div class="col-12 score">
+                    <input type="text">
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3 ml-2">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="gameNumber" id="gameNumber5" @click="changeFocus(5)">
+                <label class="form-check-label" for="gameNumber5">
+                    第5ゲーム
+                </label>
+            </div>
+        </div>
+        <div class="row mt-3 score-board" id="scoreBoard5">
+            <div class="row">
+                <div class="col-12 score">
+                    <input type="text">
+                </div>
+            </div>
+            <div class="row mt-3t">
+                <div class="col-12 score">
+                    <input type="text">
+                </div>
+            </div>
+        </div>
+    </div>
+    <link href="./css/style.css" rel="stylesheet">
+    <script src="./js/players.js"></script>
+    <script src="./js/app.js"></script>
+    <script src="./js/forbidden_reload.js"></script>
+    <script src="./js/alert_close_window.js"></script>
+  </body>
+</html>
