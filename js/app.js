@@ -101,6 +101,7 @@ var Game = class {
 var app = new Vue({
   el: '#app',
   data: {
+    player: {},
     playerID: "",
     allPlayers: [],
     date: "",
@@ -160,7 +161,8 @@ var app = new Vue({
         for (i = 0; i < rows.length; i++) {
             var input = document.createElement('input');
             input.setAttribute("type", "text");
-            rows[i].getElementsByTagName('div')[0].appendChild(input);
+            input.setAttribute("onFocus", "this.blur()");
+            rows[i].getElementsByClassName('score')[0].appendChild(input);
         };
     },
     addResultDOM(scoreEl) {
@@ -170,12 +172,16 @@ var app = new Vue({
             var pTag = document.createElement('p');
             pTag.classList.add("result");
             pTag.innerHTML = lastScoreValues[i];
-            rows[i].getElementsByTagName('div')[0].appendChild(pTag);
+            rows[i].getElementsByClassName('score')[0].appendChild(pTag);
         };
+    },
+    updatePlayer() {
+        this.$set(this, 'player', this.allPlayers.find(p => p.playerID == this.playerID));
     }
   },
   mounted() {
       document.addEventListener('keydown', e => {
+          if (document.activeElement.tagName == 'INPUT') return
           // スコア周りの制御
           if (e.code == `ArrowUp`) {
               e.preventDefault();
