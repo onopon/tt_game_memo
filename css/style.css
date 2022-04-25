@@ -2,6 +2,7 @@ p.title {
     font-size: 1.3em;
 }
 
+/*
 p.result:before {
     content:"";
     display:inline-block;
@@ -12,6 +13,7 @@ p.result:before {
     top: -10px;
     left:-14px;
 }
+*/
 
 p.result {
     position:relative;
@@ -22,15 +24,35 @@ p.result {
 }
 
 .score-board input {
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
     margin-right: 5px;
     margin-bottom: 5px;
     text-align: center;
+}
+
+.score-board .memo input {
+    width: 80%;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    text-align: left;
 }
 
 .available {
 }
 
 .unavailable {
+}
+
+.available .memo-list {
+}
+
+.unavailable .memo-list {
+  display: None;
+}
+
+.player-name {
+    font-size: 0.6em;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }

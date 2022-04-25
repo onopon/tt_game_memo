@@ -2,197 +2,440 @@
 <html>
   <head>
     <link href="./css/bootstrap.min.css" rel="stylesheet">
-    <script src="./js/bootstrap.min.js"></script>
     <script src="./js/jquery-3.6.0.min.js"></script>
     <script src="./js/vue.js"></script>
     <link rel="stylesheet" type="text/css" href="./bootstrap-datepicker-1.9.0-dist/css/bootstrap-datepicker.min.css">
     <script type="text/javascript" src="./bootstrap-datepicker-1.9.0-dist/js/bootstrap-datepicker.min.js"></script>
     <script type="text/javascript" src="./bootstrap-datepicker-1.9.0-dist/locales/bootstrap-datepicker.ja.min.js"></script>
     <script>
-        $(function(){
-            //Default
-            $('#datepicker-default .date').datepicker({
-                        format: "yyyy/mm/dd",
-                        language: 'ja'
+      $(function(){
+              //Default
+              $('#datepicker-default .date').datepicker({
+                      format: "yyyy/mm/dd",
+                      language: 'ja'
                     });
-        });
+            });
     </script>
   </head>
   <body>
     <div id="app" class="container-fluid">
-        <div class="row mt-2">
-            <div class="col">
-                <p class="title">スコアメモ</p>
-            </div>
+      <div class="row mt-2">
+        <div class="col">
+          <p class="title">スコアメモ</p>
         </div>
-        <div class="row">
-            <div class="col">
-                <p>選手ID：<input id="playerIdForm" v-model.trim="playerID" type="text" name="playerID" size="30" list="playerList" @change="updatePlayer"></p>
-                <datalist id="playerList">
-                    <option v-for="player in allPlayers" v-bind:value="player.playerID">
-                    {{ player.playerID}}: {{ player.name }}, {{ player.country }}, {{ player.region }}, class{{ player.klass }}
-                    </option>
-                </datalist>
-            </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <p>選手ID：<input id="playerIdForm" v-model.trim="playerID" type="text" name="playerID" size="30" list="playerList" @change="updatePlayer"></p>
+          <datalist id="playerList">
+            <option v-for="player in allPlayers" v-bind:value="player.playerID">
+            {{ player.playerID}}: {{ player.name }}, {{ player.country }}, {{ player.region }}, class{{ player.klass }}
+            </option>
+          </datalist>
         </div>
-        <div class="row">
-            <div class="col">
-                <p>選手名：{{ player.name }}</p>
-            </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <p>選手名：{{ player.name }}</p>
         </div>
-        <div class="row">
-            <div class="form-group" id="datepicker-default">
-                <label class="col-sm-1 control-label">日付</label>
-                <div class="col-sm-3 col-md-2 form-inline">
-                    <div class="input-group date">
-                        <input v-model="date" type="text" class="form-control">
-                        <div class="input-group-addon">
-                            <i class="fa fa-calendar"></i>
-                        </div>
-                    </div>
-                </div>
+      </div>
+      <div class="row">
+        <div class="form-group" id="datepicker-default">
+          <label class="col-sm-1 control-label">日付</label>
+          <div class="col-sm-3 col-md-2 form-inline">
+            <div class="input-group date">
+              <input v-model="date" type="text" class="form-control">
+              <div class="input-group-addon">
+                <i class="fa fa-calendar"></i>
+              </div>
             </div>
+          </div>
         </div>
-        <div class="row mt-3">
-            <div class="form-group">
-                <label class="col-sm-2 control-label">大会名</label>
-                <div class="col-sm-6 form-inline">
-                    <div class="input-group">
-                        <input type="text" class="form-control">
-                    </div>
-                </div>
+      </div>
+      <div class="row mt-3">
+        <div class="form-group">
+          <label class="col-sm-2 control-label">大会名</label>
+          <div class="col-sm-6 form-inline">
+            <div class="input-group">
+              <input type="text" class="form-control" v-model.trim="game.tournamentName">
             </div>
+          </div>
         </div>
-        <div class="row mt-3">
-            <div class="form-group">
-                <label class="col-sm-2 control-label">Tournament:</label>
-                <div class="col-sm-3">
-                    <select name="tournament">
-                        <option value="FACTOR20">FACTOR20</option>
-                        <option value="FACTOR40">FACTOR40</option>
-                        <option value="CHAMPIONSHIPS">CHAMPIONSHIPS</option>
-                    </select>
-                </div>
-            </div>
+      </div>
+      <div class="row mt-3">
+        <div class="form-group">
+          <p>Tournament：
+          <select name="tournament" v-model="game.tournament">
+            <option value="FACTOR20">FACTOR20</option>
+            <option value="FACTOR40">FACTOR40</option>
+            <option value="CHAMPIONSHIPS">CHAMPIONSHIPS</option>
+          </select>
+          </p>
         </div>
+      </div>
+      <div class="row mt-1">
+        <div class="form-group">
+          <p>{{ mainPlayer.name }}：
+          <select name="firstBall" v-model="game.firstBall">
+            <option value="1">サービス</option>
+            <option value="2">レシーブ</option>
+          </select>
+          </p>
+        </div>
+      </div>
 
-        <div class="row mt-3 ml-2">
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="gameNumber" id="gameNumber1" checked @click="changeFocus(1)">
-                <label class="form-check-label" for="gameNumber1">
-                    第1ゲーム
-                </label>
-            </div>
+      <div class="row mt-3 ml-5">
+        <div class="form-check mx-2">
+          <input class="form-check-input" type="radio" name="gameNumber" id="gameNumber1" checked @click="changeFocus(1)">
+          <label class="form-check-label" for="gameNumber1">
+            第1ゲーム
+          </label>
         </div>
-        <div class="row mt-3 score-board" id="scoreBoard1">
+      </div>
+      <div class="row mt-3 score-board" id="scoreBoard1">
+        <div class="score-flow">
+          <div class="row">
+            <div class="col-1 player-name">
+              <p>{{ mainPlayer.name }}</p>
+            </div>
+            <div class="col-11 score">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-1 player-name">
+              <p>{{ player.name }}</p>
+            </div>
+            <div class="col-11 score">
+            </div>
+          </div>
+        </div>
+        <div class="row mt-3 memo-list">
+          <div class="col-4">
+            <label for="memo1" class="form-label">メモ</label>
+            <textarea class="form-control" id="memo1" rows="16" v-model="game.memo"></textarea>
+          </div>
+          <div class="col-4">
+            <label for="playerMemo1" class="form-label">選手の特徴メモ</label>
+            <textarea class="form-control" id="playerMemo1" rows="16" v-model="game.playerMemo"></textarea>
+          </div>
+          <div class="col-4">
             <div class="row">
-                <div class="col-1">
-                    <p>{{ player.name }}</p>
-                </div>
-                <div class="col-11 score">
-                    <input type="text" onFocus="this.blur()">
-                </div>
+              <div class="col">
+                <label for="playerAdvice1" class="form-label">点数の取れている展開</label>
+                <textarea class="form-control" id="playerAdvice1" rows="4" v-model="game.playerPositiveAdvice"></textarea>
+              </div>
             </div>
-            <div class="row mt-3t">
-                <div class="col-1">
-                    <p>{{ player.name }}</p>
-                </div>
-                <div class="col-11 score">
-                    <input type="text" onFocus="this.blur()">
-                </div>
+            <div class="row">
+              <div class="col">
+                <label for="playerAdvice2" class="form-label">点数の取られている展開</label>
+                <textarea class="form-control" id="playerAdvice2" rows="4" v-model="game.playerChanceAdvice"></textarea>
+              </div>
             </div>
-        </div>
+            <div class="row">
+              <div class="col">
+                <label for="playerAdvice3" class="form-label">次ゲームでやること</label>
+                <textarea class="form-control" id="playerAdvice3" rows="4" v-model="game.playerNextAdvice"></textarea>
+              </div>
+            </div>
+            <div class="row mt-3">
+              <div class="col">
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#adviceModal">
+                  大きく表示
+                </button>
+              </div>
+            </div>
+          </div>
 
-        <div class="row mt-3 ml-2">
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="gameNumber" id="gameNumber2" @click="changeFocus(2)">
-                <label class="form-check-label" for="gameNumber2">
-                    第2ゲーム
-                </label>
-            </div>
         </div>
-        <div class="row mt-3 score-board" id="scoreBoard2">
-            <div class="row">
-                <div class="col-12 score">
-                    <input type="text" onFocus="this.blur()">
-                </div>
-            </div>
-            <div class="row mt-3t">
-                <div class="col-12 score">
-                    <input type="text" onFocus="this.blur()">
-                </div>
-            </div>
-        </div>
+      </div>
 
-        <div class="row mt-3 ml-2">
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="gameNumber" id="gameNumber3" @click="changeFocus(3)">
-                <label class="form-check-label" for="gameNumber3">
-                    第3ゲーム
-                </label>
-            </div>
+      <div class="row mt-5 ml-2">
+        <div class="form-check mx-2">
+          <input class="form-check-input" type="radio" name="gameNumber" id="gameNumber2" @click="changeFocus(2)">
+          <label class="form-check-label" for="gameNumber2">
+            第2ゲーム
+          </label>
         </div>
-        <div class="row mt-3 score-board" id="scoreBoard3">
+      </div>
+      <div class="row mt-3 score-board" id="scoreBoard2">
+        <div class="score-flow">
+          <div class="row">
+            <div class="col-1 player-name">
+              <p>{{ mainPlayer.name }}</p>
+            </div>
+            <div class="col-11 score">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-1 player-name">
+              <p>{{ player.name }}</p>
+            </div>
+            <div class="col-11 score">
+            </div>
+          </div>
+        </div>
+        <div class="row mt-3 memo-list">
+          <div class="col-4">
+            <label for="memo2" class="form-label">メモ</label>
+            <textarea class="form-control" id="memo2" rows="16" v-model="game.memo"></textarea>
+          </div>
+          <div class="col-4">
+            <label for="playerMemo2" class="form-label">選手の特徴メモ</label>
+            <textarea class="form-control" id="playerMemo2" rows="16" v-model="game.playerMemo"></textarea>
+          </div>
+          <div class="col-4">
             <div class="row">
-                <div class="col-12 score">
-                    <input type="text" onFocus="this.blur()">
-                </div>
+              <div class="col">
+                <label for="playerAdvice1" class="form-label">点数の取れている展開</label>
+                <textarea class="form-control" id="playerAdvice1" rows="4" v-model="game.playerPositiveAdvice"></textarea>
+              </div>
             </div>
-            <div class="row mt-3t">
-                <div class="col-12 score">
-                    <input type="text" onFocus="this.blur()">
-                </div>
+            <div class="row">
+              <div class="col">
+                <label for="playerAdvice2" class="form-label">点数の取られている展開</label>
+                <textarea class="form-control" id="playerAdvice2" rows="4" v-model="game.playerChanceAdvice"></textarea>
+              </div>
             </div>
+            <div class="row">
+              <div class="col">
+                <label for="playerAdvice3" class="form-label">次ゲームでやること</label>
+                <textarea class="form-control" id="playerAdvice3" rows="4" v-model="game.playerNextAdvice"></textarea>
+              </div>
+            </div>
+            <div class="row mt-3">
+              <div class="col">
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#adviceModal">
+                  大きく表示
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
 
-        <div class="row mt-3 ml-2">
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="gameNumber" id="gameNumber4" @click="changeFocus(4)">
-                <label class="form-check-label" for="gameNumber4">
-                    第4ゲーム
-                </label>
-            </div>
+      <div class="row mt-5 ml-2">
+        <div class="form-check mx-2">
+          <input class="form-check-input" type="radio" name="gameNumber" id="gameNumber3" @click="changeFocus(3)">
+          <label class="form-check-label" for="gameNumber3">
+            第3ゲーム
+          </label>
         </div>
-        <div class="row mt-3 score-board" id="scoreBoard4">
+      </div>
+      <div class="row mt-3 score-board" id="scoreBoard3">
+        <div class="score-flow">
+          <div class="row">
+            <div class="col-1 player-name">
+              <p>{{ mainPlayer.name }}</p>
+            </div>
+            <div class="col-11 score">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-1 player-name">
+              <p>{{ player.name }}</p>
+            </div>
+            <div class="col-11 score">
+            </div>
+          </div>
+        </div>
+        <div class="row mt-3 memo-list">
+          <div class="col-4">
+            <label for="memo3" class="form-label">メモ</label>
+            <textarea class="form-control" id="memo3" rows="16" v-model="game.memo"></textarea>
+          </div>
+          <div class="col-4">
+            <label for="playerMemo3" class="form-label">選手の特徴メモ</label>
+            <textarea class="form-control" id="playerMemo3" rows="16" v-model="game.playerMemo"></textarea>
+          </div>
+          <div class="col-4">
             <div class="row">
-                <div class="col-12 score">
-                    <input type="text" onFocus="this.blur()">
-                </div>
+              <div class="col">
+                <label for="playerAdvice1" class="form-label">点数の取れている展開</label>
+                <textarea class="form-control" id="playerAdvice1" rows="4" v-model="game.playerPositiveAdvice"></textarea>
+              </div>
             </div>
-            <div class="row mt-3t">
-                <div class="col-12 score">
-                    <input type="text" onFocus="this.blur()">
-                </div>
+            <div class="row">
+              <div class="col">
+                <label for="playerAdvice2" class="form-label">点数の取られている展開</label>
+                <textarea class="form-control" id="playerAdvice2" rows="4" v-model="game.playerChanceAdvice"></textarea>
+              </div>
             </div>
+            <div class="row">
+              <div class="col">
+                <label for="playerAdvice3" class="form-label">次ゲームでやること</label>
+                <textarea class="form-control" id="playerAdvice3" rows="4" v-model="game.playerNextAdvice"></textarea>
+              </div>
+            </div>
+            <div class="row mt-3">
+              <div class="col">
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#adviceModal">
+                  大きく表示
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
 
-        <div class="row mt-3 ml-2">
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="gameNumber" id="gameNumber5" @click="changeFocus(5)">
-                <label class="form-check-label" for="gameNumber5">
-                    第5ゲーム
-                </label>
-            </div>
+      <div class="row mt-5 ml-2">
+        <div class="form-check mx-2">
+          <input class="form-check-input" type="radio" name="gameNumber" id="gameNumber4" @click="changeFocus(4)">
+          <label class="form-check-label" for="gameNumber4">
+            第4ゲーム
+          </label>
         </div>
-        <div class="row mt-3 score-board" id="scoreBoard5">
+      </div>
+      <div class="row mt-3 score-board" id="scoreBoard4">
+        <div class="score-flow">
+          <div class="row">
+            <div class="col-1 player-name">
+              <p>{{ mainPlayer.name }}</p>
+            </div>
+            <div class="col-11 score">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-1 player-name">
+              <p>{{ player.name }}</p>
+            </div>
+            <div class="col-11 score">
+            </div>
+          </div>
+        </div>
+        <div class="row mt-3 memo-list">
+          <div class="col-4">
+            <label for="memo4" class="form-label">メモ</label>
+            <textarea class="form-control" id="memo4" rows="16" v-model="game.memo"></textarea>
+          </div>
+          <div class="col-4">
+            <label for="playerMemo4" class="form-label">選手の特徴メモ</label>
+            <textarea class="form-control" id="playerMemo4" rows="16" v-model="game.playerMemo"></textarea>
+          </div>
+          <div class="col-4">
             <div class="row">
-                <div class="col-12 score">
-                    <input type="text" onFocus="this.blur()">
-                </div>
+              <div class="col">
+                <label for="playerAdvice1" class="form-label">点数の取れている展開</label>
+                <textarea class="form-control" id="playerAdvice1" rows="4" v-model="game.playerPositiveAdvice"></textarea>
+              </div>
             </div>
-            <div class="row mt-3t">
-                <div class="col-12 score">
-                    <input type="text" onFocus="this.blur()">
-                </div>
+            <div class="row">
+              <div class="col">
+                <label for="playerAdvice2" class="form-label">点数の取られている展開</label>
+                <textarea class="form-control" id="playerAdvice2" rows="4" v-model="game.playerChanceAdvice"></textarea>
+              </div>
             </div>
+            <div class="row">
+              <div class="col">
+                <label for="playerAdvice3" class="form-label">次ゲームでやること</label>
+                <textarea class="form-control" id="playerAdvice3" rows="4" v-model="game.playerNextAdvice"></textarea>
+              </div>
+            </div>
+            <div class="row mt-3">
+              <div class="col">
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#adviceModal">
+                  大きく表示
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
+
+      <div class="row mt-5 ml-2">
+        <div class="form-check mx-2">
+          <input class="form-check-input" type="radio" name="gameNumber" id="gameNumber5" @click="changeFocus(5)">
+          <label class="form-check-label" for="gameNumber5">
+            第5ゲーム
+          </label>
+        </div>
+      </div>
+      <div class="row mt-3 score-board" id="scoreBoard5">
+        <div class="score-flow">
+          <div class="row">
+            <div class="col-1 player-name">
+              <p>{{ mainPlayer.name }}</p>
+            </div>
+            <div class="col-11 score">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-1 player-name">
+              <p>{{ player.name }}</p>
+            </div>
+            <div class="col-11 score">
+            </div>
+          </div>
+        </div>
+        <div class="row mt-3 memo-list">
+          <div class="col-4">
+            <label for="memo5" class="form-label">メモ</label>
+            <textarea class="form-control" id="memo5" rows="16" v-model="game.memo"></textarea>
+          </div>
+          <div class="col-4">
+            <label for="playerMemo5" class="form-label">選手の特徴メモ</label>
+            <textarea class="form-control" id="playerMemo5" rows="16" v-model="game.playerMemo"></textarea>
+          </div>
+          <div class="col-4">
+            <div class="row">
+              <div class="col">
+                <label for="playerAdvice1" class="form-label">点数の取れている展開</label>
+                <textarea class="form-control" id="playerAdvice1" rows="4" v-model="game.playerPositiveAdvice"></textarea>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <label for="playerAdvice2" class="form-label">点数の取られている展開</label>
+                <textarea class="form-control" id="playerAdvice2" rows="4" v-model="game.playerChanceAdvice"></textarea>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <label for="playerAdvice3" class="form-label">次ゲームでやること</label>
+                <textarea class="form-control" id="playerAdvice3" rows="4" v-model="game.playerNextAdvice"></textarea>
+              </div>
+            </div>
+            <div class="row mt-3">
+              <div class="col">
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#adviceModal">
+                  大きく表示
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal -->
+      <div class="modal fade" id="adviceModal" tabindex="-1" aria-labelledby="adviceModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+          <div class="modal-content">
+            <div class="modal-body">
+              <p class="title">点数の取れている展開</p>
+              <input class="message positive-advice" type="text" v-bind:value="game.positiveAdviceForDisplay">
+              <p class="title">点数の取られている展開</p>
+              <input class="message chance-advice" type="text" v-bind:value="game.chanceAdviceForDisplay">
+              <p class="title">次ゲームでやること</p>
+              <input class="message next-advice" type="text" v-bind:value="game.nextAdviceForDisplay">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
+
     <link href="./css/style.css" rel="stylesheet">
     <script src="./js/players.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
     <script src="./js/app.js"></script>
-    <!--
     <script src="./js/forbidden_reload.js"></script>
     <script src="./js/alert_close_window.js"></script>
-    -->
   </body>
 </html>
