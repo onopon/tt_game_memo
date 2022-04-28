@@ -49,17 +49,9 @@ var GameState = class {
     this.mSecondScores = [];
   }
 
-  get isFinish() {
-    return this.mIsFinish
-  }
-
-  get firstScores() {
-    return this.mFirstScores
-  }
-
-  get secondScores() {
-    return this.mSecondScores
-  }
+  get isFinish() { return this.mIsFinish }
+  get firstScores() { return this.mFirstScores }
+  get secondScores() { return this.mSecondScores }
 
   finish(scoreEl) {
     this.mIsFinish = true;
@@ -145,7 +137,29 @@ var Game = class {
   get nextAdviceForDisplay() {
     return this.playerNextAdvice.split('\n')[this.focusGameNumber*2 - 1]
   }
+
+  toArrayForCSV(date) {
+    var dataHash = {};
+    dataHash['date'] = date;
+    dataHash['tournamentName'] = this.tournamentName;
+    dataHash['tournament'] = this.tournament;
+    dataHash['mainPlayerID'] = this.mainPlayerID;
+    dataHash['playerID'] = this.playerID;
+    dataHash['firstBall'] = this.firstBall;
+    dataHash['memo'] = this.memo;
+    dataHash['playerMemo'] = this.playerMemo;
+    dataHash['playerPositiveAdvice'] = this.playerPositiveAdvice;
+    dataHash['playerChanceAdvice'] = this.playerChanceAdvice;
+    dataHash['playerNextAdvice'] = this.playerNextAdvice;
+    for (var i = 0; i < 5; i++) {
+      var gameState = this.gameStates[i];
+      dataHash[`gameState_${i + 1}_first`] = gameState.firstScores.toString();
+      dataHash[`gameState_${i + 1}_second`] = gameState.secondScores.toString();
+    }
+    return [dataHash];
+  }
 }
+
 var app = new Vue({
   el: '#app',
   data: {
@@ -162,12 +176,12 @@ var app = new Vue({
       this.$set(this, 'allPlayers', loadAllPlayers());
       var today = new Date();
       this.$set(this, 'date', `${today.getFullYear()}/${today.getMonth()+1}/${today.getDate()}`);
-      this.$set(this, 'mainPlayer', this.allPlayers.find(p => p.playerID == MAIN_PLAYER_ID));
+      this.game.mainPlayerID = MAIN_PLAYER_ID;
+      this.$set(this, 'mainPlayer', this.allPlayers.find(p => p.playerID == this.game.mainPlayerID));
       this.changeFocus(1);
       for (var i = 1; i <= 5; i++) {
         var scoreEl = document.getElementById(`scoreBoard${i}`);
         this.addScoreDOM(scoreEl);
-//      this.addMemoDOM(scoreEl);
       }
     },
     addPoint(isFirstPlayer = true) {
@@ -180,7 +194,6 @@ var app = new Vue({
       row.getElementsByClassName('score')[0].lastChild.value = lastScoreValue + 1;
 
       this.addScoreDOM(scoreEl);
-//      this.addMemoDOM(scoreEl);
     },
     deletePoint() {
       var scoreEl = document.getElementById(`scoreBoard${this.game.focusGameNumber}`);
@@ -220,40 +233,6 @@ var app = new Vue({
         rows[i].getElementsByClassName('score')[0].appendChild(input);
       };
     },
-    addMemoDOM(scoreEl) {
-      if (isGameFinish(scoreEl)) return;
-      var memoList = scoreEl.getElementsByClassName('memoList')[0];
-      var memoClasses = memoList.getElementsByClassName('memo');
-      var memo = memoClasses[memoClasses.length - 1];
-      var scoreValues = getLastScoreValues(scoreEl);
-      var scoreValue = `${scoreValues[0]}-${scoreValues[1]}`;
-
-      if (!memo || memo.getElementsByTagName('input')[0].value != '') {
-        var row = document.createElement('div');
-        row.classList.add('row');
-
-        var score = document.createElement('div');
-        score.classList.add('col-1', 'score');
-        var pTag = document.createElement('p');
-        pTag.textContent = scoreValue;
-        score.appendChild(pTag);
-
-        var memo = document.createElement('div');
-        memo.classList.add('col-11', 'memo');
-        var input = document.createElement('input');
-        input.setAttribute('type', 'text');
-        input.setAttribute('name', 'memo');
-        memo.appendChild(input);
-
-        row.appendChild(score);
-        row.appendChild(memo);
-
-        memoList.appendChild(row);
-      } else {
-        var scoreClasses = memoList.getElementsByClassName('score');
-        scoreClasses[scoreClasses.length - 1].getElementsByTagName('p')[0].textContent = scoreValue;
-      }
-    },
     addResultDOM(scoreEl) {
       var rows = scoreEl.getElementsByClassName('score-flow')[0].getElementsByClassName('row');
       var lastScoreValues = getLastScoreValues(scoreEl);
@@ -265,9 +244,11 @@ var app = new Vue({
       };
     },
     updatePlayer() {
-      this.$set(this, 'player', this.allPlayers.find(p => p.playerID == this.playerID));
+      this.$set(this, 'player', this.allPlayers.find(p => p.playerID == this.game.playerID));
     },
-
+    saveAsCSV() {
+      (new CSV(this.game.toArrayForCSV(this.date))).save(`${this.date}_${this.game.mainPlayerID}_${this.game.playerID}.csv`);
+    }
   },
   mounted() {
     document.addEventListener('keydown', e => {

@@ -56,3 +56,38 @@ p.result {
     word-wrap: break-word;
     overflow-wrap: break-word;
 }
+
+#adviceModal .modal-body, #adviceModal .modal-header, #adviceModal .modal-footer {
+  color: #454552;
+  background: #d8e9ef;
+}
+
+#adviceModal .title {
+  font-size: 0.9em;
+  font-weight: bold;
+  margin-bottom: 0px;
+}
+
+#adviceModal .message {
+  margin-top: 0px;
+  padding-top: 0px;
+  width: 100%;
+  background: #d8e9ef;
+  font-size: 2.2em;
+  border-style: none;
+}
+
+#adviceModal .positive-advice,
+#adviceModal .positive-advice textarea {
+  color: #4ea1d3;
+}
+
+#adviceModal .chance-advice,
+#adviceModal .chance-advice textarea {
+  color: #454552;
+}
+
+#adviceModal .next-advice,
+#adviceModal .next-advice textarea {
+  color: #e85a71;
+}
