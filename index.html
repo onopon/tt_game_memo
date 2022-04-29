@@ -28,7 +28,7 @@
         <div class="col-5">
           <div class="row">
             <div class="col">
-              <p>選手ID：<input id="playerIdForm" v-model.trim="game.mainPlayerID" type="text" name="playerID" size="30" list="playerList" @change="updateMainPlayer" value="{{ mainPlayer.playerID }}"></p>
+              <p>選手ID：<input id="playerIdForm" v-model.trim="game.mainPlayerID" type="text" name="playerID" size="30" list="playerList" @change="updateMainPlayer"></p>
               <datalist id="playerList">
                 <option v-for="player in allPlayers" v-bind:value="player.playerID">
                 {{ player.playerID}}: {{ player.name }}, {{ player.country }}, {{ player.region }}, class{{ player.klass }}

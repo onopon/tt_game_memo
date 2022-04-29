@@ -225,6 +225,7 @@ var app = new Vue({
           scoreEl.classList.add('unavailable');
         }
       }
+      document.activeElement.blur();
     },
     addScoreDOM(scoreEl) {
       if (isGameFinish(scoreEl)) {
