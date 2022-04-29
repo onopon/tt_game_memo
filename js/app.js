@@ -94,11 +94,11 @@ var Game = class {
     for (var i = 1; i <= 5; i++) {
       memoDefaults.push(`●第${i}ゲーム----------------------------`)
     }
-    this.mMemo = memoDefaults.join('\n')
-    this.mPlayerMemo = memoDefaults.join('\n')
-    this.mPlayerPositiveAdvice = memoDefaults.join('\n')
-    this.mPlayerChanceAdvice = memoDefaults.join('\n')
-    this.mPlayerNextAdvice = memoDefaults.slice(0, 4).join('\n')
+    this.mMemo = memoDefaults.join('\n\n')
+    this.mPlayerMemo = memoDefaults.join('\n\n')
+    this.mPlayerPositiveAdvice = memoDefaults.join('\n\n')
+    this.mPlayerChanceAdvice = memoDefaults.join('\n\n')
+    this.mPlayerNextAdvice = memoDefaults.slice(0, 4).join('\n\n')
   }
 
   get focusGameNumber() { return this.mFocusGameNumber }
@@ -293,6 +293,9 @@ var app = new Vue({
   },
   mounted() {
     document.addEventListener('keydown', e => {
+      if (e.code == `Escape`) {
+        document.activeElement.blur();
+      }
       if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return
       // スコア周りの制御
       if (e.code == `ArrowUp`) {
