@@ -91,3 +91,19 @@ p.result {
 #adviceModal .next-advice textarea {
   color: #e85a71;
 }
+
+.server {
+  font-weight: bold;
+  position: relative;
+}
+
+.server:after {
+  content:"";
+  display:inline-block;
+  width: 6px;
+  height: 30px;
+  background-color:#DDDDDD;
+  position:absolute;
+  top: 0px;
+  right: 2px;
+}

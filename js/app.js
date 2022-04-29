@@ -86,8 +86,10 @@ var Game = class {
     this.mTournamentName = ''
     this.mTournament = 'FACTOR20'
     this.mMainPlayerID = ''
+    this.mMainPlayer = {}
     this.mPlayerID = ''
-    this.mFirstBall = '1' // 1: Serve 2: Receive
+    this.mPlayer = {}
+    this.mFirstBall = 1 // 1: Serve -1: Receive
     var memoDefaults = []
     for (var i = 1; i <= 5; i++) {
       memoDefaults.push(`●第${i}ゲーム----------------------------`)
@@ -138,13 +140,15 @@ var Game = class {
     return this.playerNextAdvice.split('\n')[this.focusGameNumber*2 - 1]
   }
 
-  toArrayForCSV(date) {
+  toArrayForCSV(date, mainPlayerName, playerName) {
     var dataHash = {};
     dataHash['date'] = date;
     dataHash['tournamentName'] = this.tournamentName;
     dataHash['tournament'] = this.tournament;
     dataHash['mainPlayerID'] = this.mainPlayerID;
+    dataHash['mainPlayerName'] = mainPlayerName;
     dataHash['playerID'] = this.playerID;
+    dataHash['playerName'] = playerName;
     dataHash['firstBall'] = this.firstBall;
     dataHash['memo'] = this.memo;
     dataHash['playerMemo'] = this.playerMemo;
@@ -182,6 +186,7 @@ var app = new Vue({
       for (var i = 1; i <= 5; i++) {
         var scoreEl = document.getElementById(`scoreBoard${i}`);
         this.addScoreDOM(scoreEl);
+        this.updateService(scoreEl, i);
       }
     },
     addPoint(isFirstPlayer = true) {
@@ -194,6 +199,7 @@ var app = new Vue({
       row.getElementsByClassName('score')[0].lastChild.value = lastScoreValue + 1;
 
       this.addScoreDOM(scoreEl);
+      this.updateService(scoreEl);
     },
     deletePoint() {
       var scoreEl = document.getElementById(`scoreBoard${this.game.focusGameNumber}`);
@@ -205,6 +211,7 @@ var app = new Vue({
         score.lastChild.value = '';
       }
       this.game.gameState.reset();
+      this.updateService(scoreEl);
     },
     changeFocus(gameNumber) {
       for (var i = 1; i <= 5; i++) {
@@ -233,7 +240,37 @@ var app = new Vue({
         rows[i].getElementsByClassName('score')[0].appendChild(input);
       };
     },
+    updateService(scoreEl, focusGameNumber = this.game.focusGameNumber) {
+      var rows = scoreEl.getElementsByClassName('score-flow')[0].getElementsByClassName('row');
+      if (this.game.gameState.isFinish) {
+        for (i = 0; i < rows.length; i++) {
+          rows[i].getElementsByClassName('player-name')[0].classList.remove('server');
+        }
+        return;
+      }
+      var lastScoreValues = getLastScoreValues(scoreEl);
+      var sum = lastScoreValues[0] + lastScoreValues[1];
+      var gameParams = [1, -1, 1, -1, 1]
+      var param = [0, 1].includes(sum % 4) ? 1 : -1
+      if (sum > 20) { // デュース
+        param = (sum % 2) == 0 ? 1 : -1
+      }
+      if (gameParams[focusGameNumber - 1] * this.game.firstBall * param == 1) {
+        rows[0].getElementsByClassName('player-name')[0].classList.add('server');
+        rows[1].getElementsByClassName('player-name')[0].classList.remove('server');
+      } else {
+        rows[0].getElementsByClassName('player-name')[0].classList.remove('server');
+        rows[1].getElementsByClassName('player-name')[0].classList.add('server');
+      }
+    },
+    updateAllServices() {
+      for (var i = 1; i <= 5; i++) {
+        var scoreEl = document.getElementById(`scoreBoard${i}`);
+        this.updateService(scoreEl, i);
+      }
+    },
     addResultDOM(scoreEl) {
+      this.updateService(scoreEl);
       var rows = scoreEl.getElementsByClassName('score-flow')[0].getElementsByClassName('row');
       var lastScoreValues = getLastScoreValues(scoreEl);
       for (i = 0; i < rows.length; i++) {
@@ -243,11 +280,15 @@ var app = new Vue({
         rows[i].getElementsByClassName('score')[0].appendChild(pTag);
       };
     },
+    updateMainPlayer() {
+      this.$set(this, 'mainPlayer', this.allPlayers.find(p => p.playerID == this.game.mainPlayerID));
+    },
     updatePlayer() {
       this.$set(this, 'player', this.allPlayers.find(p => p.playerID == this.game.playerID));
     },
     saveAsCSV() {
-      (new CSV(this.game.toArrayForCSV(this.date))).save(`${this.date}_${this.game.mainPlayerID}_${this.game.playerID}.csv`);
+      var playerID = this.game.playerID || 999999;
+      (new CSV(this.game.toArrayForCSV(this.date, this.mainPlayer.name, this.player.name))).save(`${this.date}_${this.game.mainPlayerID}_${playerID}.csv`);
     }
   },
   mounted() {

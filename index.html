@@ -25,18 +25,42 @@
         </div>
       </div>
       <div class="row">
-        <div class="col">
-          <p>選手ID：<input id="playerIdForm" v-model.trim="game.playerID" type="text" name="playerID" size="30" list="playerList" @change="updatePlayer"></p>
-          <datalist id="playerList">
-            <option v-for="player in allPlayers" v-bind:value="player.playerID">
-            {{ player.playerID}}: {{ player.name }}, {{ player.country }}, {{ player.region }}, class{{ player.klass }}
-            </option>
-          </datalist>
+        <div class="col-5">
+          <div class="row">
+            <div class="col">
+              <p>選手ID：<input id="playerIdForm" v-model.trim="game.mainPlayerID" type="text" name="playerID" size="30" list="playerList" @change="updateMainPlayer" value="{{ mainPlayer.playerID }}"></p>
+              <datalist id="playerList">
+                <option v-for="player in allPlayers" v-bind:value="player.playerID">
+                {{ player.playerID}}: {{ player.name }}, {{ player.country }}, {{ player.region }}, class{{ player.klass }}
+                </option>
+              </datalist>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <p>選手名：<input v-model.trim="mainPlayer.name" type="text" size="30"></p>
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="col">
-          <p>選手名：{{ player.name }}</p>
+        <div class="col-2 d-flex align-items-center">
+          <p>VS</p>
+        </div>
+        <div class="col-5">
+          <div class="row">
+            <div class="col">
+              <p>選手ID：<input id="playerIdForm2" v-model.trim="game.playerID" type="text" name="playerID" size="30" list="playerList" @change="updatePlayer"></p>
+              <datalist id="playerList">
+                <option v-for="player in allPlayers" v-bind:value="player.playerID">
+                {{ player.playerID}}: {{ player.name }}, {{ player.country }}, {{ player.region }}, class{{ player.klass }}
+                </option>
+              </datalist>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <p>選手名：<input v-model.trim="player.name" type="text" size="30"></p>
+            </div>
+          </div>
         </div>
       </div>
       <div class="row">
@@ -76,9 +100,9 @@
       <div class="row mt-1">
         <div class="form-group">
           <p>{{ mainPlayer.name }}：
-          <select name="firstBall" v-model="game.firstBall">
+          <select name="firstBall" v-model="game.firstBall" @change="updateAllServices">
             <option value="1">サービス</option>
-            <option value="2">レシーブ</option>
+            <option value="-1">レシーブ</option>
           </select>
           </p>
         </div>
@@ -409,7 +433,7 @@
           </div>
         </div>
       </div>
-      <div class="row mt-3">
+      <div class="row mt-3 mb-5">
         <div class="col">
           <button type="button" class="btn btn-primary" @click="saveAsCSV">
             戦績をCSVとして保存
